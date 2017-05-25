@@ -1,0 +1,14 @@
+---
+- hosts: webserver
+  become: yes
+  tasks:
+  - name: Install Web server packages
+    yum: 
+     name: "{{ item }}"
+     state: latest
+    with_items:
+        - httpd
+        - php
+        - php-mysql
+        - elinks
+   

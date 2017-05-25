@@ -1,0 +1,8 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+   - name: Install Elinks
+     yum: 
+      name: elinks
+      state: present

@@ -1,0 +1,23 @@
+---
+  
+- hosts: webserver
+  become: yes
+  tasks:
+  - name: Install Apache on webservers
+    yum:
+      name: httpd
+      state: latest
+  - name: Start and enable apache service
+    service:
+      name: httpd
+      state: reloaded
+      enabled: yes
+  - name: Create document root file
+    file:
+      state: touch
+      path: /var/www/html/index.html
+  - name:
+    lineinfile:
+      state: present
+      path: /var/www/html/index.html
+      line: Hostname={{ ansible_hostname }}
