@@ -1,0 +1,53 @@
+---
+- hosts: local
+  tasks:
+  - name: File check on localhost
+    shell: ls /home/ansible/file1.txt
+    register: local_ls
+    tags: 
+      file_list_local
+    ignore_errors: yes
+  - name: Error handling for local
+    debug: msg="file not present"
+    when: 
+    - local_ls.rc <= 1
+    tags:
+      file_not_present_local
+  - include: tasks/create-file-to-upload-target.yml
+    when: local_ls.rc <= 1
+    tags:
+     file_create_local
+  - name: File present check for local_host
+    debug: msg="File present"
+    when: 
+    - local_ls.rc == 0
+    tags:
+     file_present_local
+  - name: upload file to target servers
+    copy:
+     src: /home/ansible/file1.txt
+     dest: /home/ansible/hostname.txt
+     mode: 0755
+  - name: File list
+    shell: ls /home/ansible/hostname.txt 
+    register: output
+    tags:
+     list_file
+  - name: Error handling for remote host
+    debug: msg="file not present"
+    when: 
+    - output.rc <= 1
+    tags:
+      file_not_present_remote
+  - name: File present check for remote host
+    debug: msg="File present"
+    when: 
+    - output.rc = 0
+    tags:
+     file_present_remote
+  - name: Add line
+    lineinfile: 
+     path: /home/ansible/hostname.txt
+     regexp: '^hostname2='
+     insertafter: '^hostname2='
+     line: "hostname2 = {{ ansible_hostname }}"
