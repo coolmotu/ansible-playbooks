@@ -1,0 +1,6 @@
+---
+# tasks file for roles/vault-check
+- name: Encrytped file
+  copy:
+    src: "{{ secret_data }}"
+    dest: /home/ansible/public.txt
