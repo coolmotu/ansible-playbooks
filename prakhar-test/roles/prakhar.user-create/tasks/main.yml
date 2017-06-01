@@ -1,0 +1,21 @@
+---
+# tasks file for prakhar.user-create
+- name: Create user from the list
+  user:
+   name: "{{ item }}"
+   state: present
+  with_items:
+    - "{{ users }}"
+- name: Create group from the list
+  group:
+   name: "{{ item }}"
+   state: present
+  with_items:
+    - "{{ mygroup }}"
+- name: Remove users
+  user:
+   name: "{{ item }}"
+   state: absent
+  with_items:
+    - "{{ blocked }}"
+

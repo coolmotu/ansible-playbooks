@@ -1,0 +1,11 @@
+---
+# defaults file for prakhar.user-create
+
+# List of users to be created
+users: []
+
+#List of group to be created.
+mygroups: []
+
+#List of users to be removed
+blocked: []

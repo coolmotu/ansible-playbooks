@@ -1,0 +1,8 @@
+---
+- hosts: everyone
+  become: yes
+  tasks:
+   - block:
+      - get_url: url=http://content.example.com/test/file1.html dest=/var/ftp/pub/file1.html
+     rescue:
+      - copy: content="No access to server\n" dest=/home/devops/error.txt

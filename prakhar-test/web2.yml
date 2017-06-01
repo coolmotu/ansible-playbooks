@@ -1,0 +1,32 @@
+---
+- hosts: webservers
+  become: yes
+  tasks:
+  - name: Create secret dir
+    file:
+     name: /var/www/html/secret
+     state: directory
+  - name: get Access file
+    get_url: 
+     url: http://content.example.com/test/access
+     dest: /var/www/html/secret/.htaccess
+  - name: get password file
+    get_url: 
+     url: http://content.example.com/test/passwd
+     dest: /var/www/html/secret/.htpasswd
+  - name: get index-sec file
+    get_url: 
+     url: http://content.example.com/test/index-sec.html
+     dest: /var/www/html/secret/index.html
+  - name: Replace Authconfig
+    replace:
+     dest: /etc/httpd/conf/httpd.conf
+     regexp: 'AllowOverride None$'
+     replace: 'AllowOverride AuthConfig'
+    notify: restart httpd
+  handlers:
+    - name: restart httpd
+      service: name=httpd state=restarted
+     
+     
+  

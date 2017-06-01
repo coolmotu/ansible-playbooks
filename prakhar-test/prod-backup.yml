@@ -1,0 +1,12 @@
+---
+- hosts: prod
+  become: yes
+  tasks:
+  - name: Prod Server conf dir
+    shell: tar cvzf /tmp/prod.tar.gz /etc/httpd/conf
+
+- hosts: backup
+  become: yes
+  tasks:
+  - name: Prod Server conf dir
+    shell: tar cvzf /tmp/backup.tar.gz /var/log/httpd

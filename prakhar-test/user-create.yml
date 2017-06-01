@@ -1,0 +1,20 @@
+---
+- hosts: backup
+  become: yes
+  vars:
+   - users: [ 'user1', 'user2', 'user3', 'user4', 'user5', 'user6', 'user7', 'user8', 'user9', 'user10']
+   - mygroup: [ 'sales', 'finance' ]
+   - blocked: [ 'bad1', 'bad2' ]
+  roles:
+   - prakhar.user-create
+  tasks:
+  - name:  Add user2 and user3 in sales group
+    user:
+     name: "{{ users[01] }}"
+     groups: sales
+     append: yes
+  - name:  Add user10 in sales group
+    user:
+     name: "{{ users[9] }}"
+     groups: finance
+     append: yes

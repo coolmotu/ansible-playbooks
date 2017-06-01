@@ -1,0 +1,35 @@
+---
+- hosts: webservers
+  become: yes
+  tasks:
+  - name: Install packages
+    yum: 
+     name: http://classroom.example.com/content/rhel7.2/x86_64/dvd/Packages/vsftpd1-3.0.2-10.el7.x86_64.rpm
+     state: present
+    ignore_errors: yes
+  - name: Command1
+    shell: yum list vsftpd1 &> /dev/null
+    register: yum_check
+    ignore_errors: yes
+  - name: Package Install check
+    debug: msg="Installation failed"
+    when: yum_check.rc >= 1
+  - name: Service start
+    service:
+     name: vsftpd1
+     state: started
+     enabled: yes
+    ignore_errors: yes
+  - name: Command2
+    shell: systemctl status vsftpd1 &> /dev/null
+    register: service_check
+    ignore_errors: yes
+  - name: Service check
+    debug: msg="Service failed"
+    when: service_check.rc >= 1
+    ignore_errors: yes
+  - name: Both check
+    debug: msg="Deployment failed"
+    when: yum_check.rc >= 1 or service_check.rc >= 1
+    
+    

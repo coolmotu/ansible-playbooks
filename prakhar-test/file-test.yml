@@ -1,0 +1,25 @@
+---
+- hosts: everyone
+  become: yes
+  tasks: 
+  - name: Check file
+    shell: ls /etc/test
+    register: file_check
+    ignore_errors: yes
+  - name: Insert into new file
+    lineinfile:
+     dest: /etc/test
+     line: "{{ansible_fqdn}}"
+     create: yes
+    when: file_check.rc >= 1
+  - name: Append file
+    lineinfile:
+     dest: /etc/test
+     regexp: '^"{{ ansible_fqdn }}"'
+     insertafter: '^"{{ ansible_fqdn }}"'
+     line: '{{ ansible_fqdn }}'
+     state: present
+    when: file_check.rc == 0
+    ignore_errors: yes
+    
+

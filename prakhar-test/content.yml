@@ -1,0 +1,7 @@
+---
+- hosts: everyone
+  tasks:
+   - name: Copy content
+     copy:
+      content: "{{ansible_fqdn}} {{ansible_eth0.ipv4.address}} {{ansible_eth0.macaddress}} {{ansible_processor_count}}\n"
+      dest: /home/devops/info.txt

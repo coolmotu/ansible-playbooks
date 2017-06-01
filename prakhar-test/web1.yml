@@ -1,0 +1,74 @@
+---
+- hosts: webservers
+  become:   yes
+  tasks:
+  - name: Install Apache and firewalld
+    yum:
+      name:  "{{item}}"
+      state: latest
+    tags:
+      install_httpd
+    with_items:
+      - httpd
+      - firewalld
+  - name: Start httpd and firewalld
+    service:
+      name:  "{{item}}"
+      state: started
+      enabled: yes
+    with_items:
+      - httpd
+      - firewalld
+    tags:
+      httpd_start
+  - name: Copy httpd.conf
+    get_url:
+     url: http://content.example.com/test/httpd.conf
+     dest: /etc/httpd/conf/httpd.conf
+     owner: root
+     group: root
+     mode: 0644
+     setype: httpd_config_t
+    tags:
+      copy_conf  
+    notify:
+      - restart httpd 
+  - name: Copy index.html
+    get_url:
+     url: http://content.example.com/test/index.html
+     dest: /var/www/html/index.html
+     owner: root
+     group: root
+     mode: 0644
+     setype: httpd_sys_content_t
+    tags:
+      copy_index 
+  - name: Check file
+    shell: cat /var/www/html/index.html
+    register: output
+    tags:
+      list_file
+  - name: Check output
+    debug: msg="{{output.rc}}"
+  - name: Append file
+    lineinfile: 
+     dest: '/var/www/html/index.html'
+     regexp: 'Hello xxx'
+     line: 'Hello {{ansible_hostname}}'
+    when: 
+    - output.rc == 0 
+    tags:
+      append_file
+  - name: Message to the user
+    debug: msg="index.html does not exist"
+    when: 
+    - output.rc >= 1
+  - name: Enable port 80
+    firewalld:
+     service: http
+     state: enabled
+     immediate: yes
+     permanent: true
+  handlers:
+    - name: restart httpd
+      service: name=httpd state=restarted  
