@@ -1,0 +1,6 @@
+---
+# tasks file for install-software
+- name:
+  yum:
+   name: "{{ software }}"
+   state: latest

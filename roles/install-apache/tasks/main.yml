@@ -1,0 +1,11 @@
+- name: Install Apache
+  yum: 
+   name: "{{ item }}"
+   state: latest
+  with_items:
+    - httpd
+    - php
+    - php-pear
+    - php-gd
+    - elinks
+  notify: Restart HTTPD
