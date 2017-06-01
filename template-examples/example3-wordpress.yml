@@ -1,0 +1,62 @@
+---
+- hosts: webserver
+  become: yes
+  vars:
+   username: wordpress
+   database_name: wordpress
+   password: redhat
+   dbhost:  172.31.6.120
+  tasks:
+  - name: Install Packages
+    yum:
+     name: "{{ item }}"
+     state: latest
+    with_items:
+      - php
+      - php-gd
+      - php-pear
+      - php-mysql
+      - mariadb-server
+      - MySQL-python
+  - name: Start mariadb service
+    service:
+     name: mariadb
+     state: started
+  - name: Create a new db
+    mysql_db:
+     name: "{{ database_name }}"
+     state: present
+  - name: Create db user
+    mysql_user:
+     name: wordpress
+     password: redhat
+     priv: 'wordpress.*:ALL'
+     state: present
+     host: 172.31.6.120
+  - name: Start httpd service
+    service:
+     name: httpd
+     state: started
+  - name: Unarchive wordpress latest
+    unarchive:
+     src: https://wordpress.org/latest.tar.gz
+     dest: /tmp/
+     remote_src: True
+    tags:
+      download_wordpress
+  - name: remove html folder
+    file:
+     path: /var/www/html/
+     state: absent
+    tags:
+      remove_html
+  - name: copy wordpress
+    shell: mv /tmp/wordpress/ /var/www/html
+    tags:
+      copy_wordpress
+  - name: copy template 
+    template: src=wp-config-sample.j2 dest=/var/www/html/wp-config.php 
+    tags:
+     copy_template
+    
+ 

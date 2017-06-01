@@ -1,0 +1,11 @@
+---
+- hosts: local
+  become: yes
+  vars:
+   description: "{{ ansible_hostname }}"
+  tasks:
+  - name: write the config file
+    template: 
+         src: template.j2
+         dest: /home/ansible/index.html
+

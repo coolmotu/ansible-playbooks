@@ -1,0 +1,8 @@
+---
+- hosts: local
+  tasks:
+   - name: Check command and register
+     command: date 
+     register: output
+   - debug: msg="stdout={{ output.stdout }}"
+   - debug: msg="stderr={{ output.stderr }}"

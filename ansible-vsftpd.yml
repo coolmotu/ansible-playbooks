@@ -1,0 +1,18 @@
+---
+- hosts: local
+  become: yes
+  tasks:
+   - name: Install vsftpd services
+     yum:
+      name: vsftpd
+      state: latest
+   - name: Insert Banner
+     lineinfile:
+       path: /etc/vsftpd/vsftpd.conf
+       insertafter: '^#ftpd_banner'
+       line: 'ftpd_banner=Retricted ftp access'
+   - name: Start services for vsftpd
+     service:
+       name: vsftpd
+       state: restarted
+       

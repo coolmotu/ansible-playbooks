@@ -1,0 +1,12 @@
+---
+- hosts: all
+  vars:
+   package_name: httpd
+  tasks:
+  - name: Install httpd package
+    become: yes
+    yum:
+     name: "{{ package_name }}"
+     state: latest
+    when: ansible_os_family == 'RedHat' 
+

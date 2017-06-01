@@ -1,0 +1,58 @@
+--- 
+- hosts: local
+  become: yes
+  tasks:
+  - name: Create User
+    user: 
+      name: webadmin
+      createhome: yes
+      home: /home/webadmin
+      shell: /bin/bash
+  - name: Verify User
+    shell: id webadmin
+    register: webadmin_check
+    tags:
+     user1
+    ignore_errors: yes
+  - name: User is present 
+    debug: msg="User webadmin is present"
+    when: 
+     - webadmin_check.rc == 0
+    tags:
+     user_present
+  - name: User is not present
+    debug: msg="User is not present"
+    when: 
+     - webadmin_check.rc == 1 
+    tags:
+      user_not_present
+  - name: Copy program1.sh
+    copy:
+     src: /opt/program1.sh
+     dest: /home/webadmin/program1.sh
+     mode: 0755
+  - name: list  File
+    shell: ls /home/webadmin/program1.sh 
+    register: file_list
+    ignore_errors: yes
+    tags:
+       file_check
+  - name: Verify file is present
+    debug: msg="File is present."
+    when:
+     - file_list.rc == 0
+    tags:
+      file_present
+  - name: File not presnt 
+    debug: msg="File is not present"
+    when: 
+     - file_list.rc >= 1
+    tags:
+     file_not_present
+  - name: Execute file
+    shell: /home/webadmin/program1.sh
+    register: program_out
+  - name: output of script
+    debug: msg="output {{ program_out }}"  
+    
+       

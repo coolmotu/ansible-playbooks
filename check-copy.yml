@@ -1,0 +1,11 @@
+---
+- hosts: all
+  vars:
+    copy_from: /etc/ansible/hosts
+  tasks:
+  - name: copy from file
+    copy:
+     src: "{{ copy_from }}"
+     dest: /home/ansible/hosts
+     mode: 0644
+  
